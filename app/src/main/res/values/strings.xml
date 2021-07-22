@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Android Suspend Dialogs</string>
+
+    <string name="confirm_dialog">Confirm</string>
+    <string name="dialog_alert">Alert</string>
+    <string name="dialog_multi_choice">Multi Choice</string>
+    <string name="dialog_single_choice">Single Choice</string>
+    <string name="alert_finished">Alert finished</string>
+
+    <string name="dialog_confirm_ext">Confirm Ext</string>
+    <string name="dialog_alert_ext">Alert Ext</string>
+    <string name="dialog_multi_choice_ext">Multi Choice Ext</string>
+    <string name="dialog_single_choice_ext">Single Choice Ext</string>
+</resources>
