@@ -2,6 +2,19 @@
 
 A helper library for Android to display Dialogs by suspending the coroutine till finish of the dialog.
 
+# Installation
+allprojects {
+	repositories {
+		...
+		maven { url 'https://www.jitpack.io' }
+	}
+}
+
+dependencies {
+    implementation 'com.github.xeinebiu:android-suspend-dialogs:Tag'
+}
+    
+
 # Some Differences with and without suspend
 
 ### Confirm
