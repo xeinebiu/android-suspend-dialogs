@@ -11,4 +11,10 @@
     <string name="dialog_alert_ext">Alert Ext</string>
     <string name="dialog_multi_choice_ext">Multi Choice Ext</string>
     <string name="dialog_single_choice_ext">Single Choice Ext</string>
+    <string name="dialog_fragment">Dialog Fragment</string>
+    <string name="hello_world">Hello world</string>
+    <string name="close_fragment">Close Fragment</string>
+    <string name="custom_dialog_fragment_with_result">Custom Dialog Fragment with Result</string>
+    <string name="enter_text">Enter Text</string>
+    <string name="save">Save</string>
 </resources>

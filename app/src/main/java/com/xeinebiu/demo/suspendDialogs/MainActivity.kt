@@ -1,15 +1,12 @@
 package com.xeinebiu.demo.suspendDialogs
 
 import android.os.Bundle
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.xeinebiu.demo.suspendDialogs.databinding.ActivityMainBinding
-import com.xeinebiu.suspend.dialogs.SuspendAlertDialog
-import com.xeinebiu.suspend.dialogs.alert
-import com.xeinebiu.suspend.dialogs.confirm
-import com.xeinebiu.suspend.dialogs.setMultiChoiceItems
-import com.xeinebiu.suspend.dialogs.setSingleChoiceItems
+import com.xeinebiu.suspend.dialogs.*
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +35,34 @@ class MainActivity : AppCompatActivity() {
             confirmDialogExt()
 
             alertdialogExt()
+
+            fragmentDialog()
+
+            customDialogFragmentWithResult()
+        }
+    }
+
+    private fun ActivityMainBinding.customDialogFragmentWithResult() {
+        btnDialogFragmentResult.setOnClickListener {
+            lifecycleScope.launch {
+                val result = DemoResultDialogFragment().showAwaitResult(
+                    fragmentManager = supportFragmentManager,
+                    tag = DemoResultDialogFragment::class.java.canonicalName
+                )
+                tvResult.text = result
+            }
+        }
+    }
+
+    private fun ActivityMainBinding.fragmentDialog() {
+        btnDialogFragment.setOnClickListener {
+            lifecycleScope.launch {
+                DemoDialogFragment().showAwait(
+                    fragmentManager = supportFragmentManager,
+                    tag = DemoDialogFragment::class.java.canonicalName
+                )
+                tvResult.text = "${DemoDialogFragment::class.java.canonicalName} finished"
+            }
         }
     }
 
@@ -62,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     .confirm(
                         positiveButtonText = "Save",
                         negativeButtonText = "Cancel",
-                        neutralButtonText = "Minimize",
+                        neutralButtonText = "Neutral",
                     )
 
                 tvResult.text = result.toString()
@@ -151,6 +176,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun ActivityMainBinding.confirmDialog() {
+
         btnConfirm.setOnClickListener {
             lifecycleScope.launch {
                 val result = SuspendAlertDialog.confirm(
