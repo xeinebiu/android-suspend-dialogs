@@ -2,6 +2,23 @@
 
 A helper library for Android to display Dialogs by suspending the coroutine till finish of the dialog.
 
+# Installation
+```
+allprojects {
+	repositories {
+		...
+		maven { url 'https://www.jitpack.io' }
+	}
+}
+```
+
+```
+dependencies {
+    implementation 'com.github.xeinebiu:android-suspend-dialogs:1.0.0'
+}
+```
+    
+
 # Some Differences with and without suspend
 
 ### Confirm
@@ -148,3 +165,6 @@ val result = MaterialAlertDialogBuilder(this@MainActivity)
 
 tvResult.text = result.toString()
 ```
+
+## Next TODO
+- support Dialog Fragments
