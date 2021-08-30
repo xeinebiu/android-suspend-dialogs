@@ -166,5 +166,34 @@ val result = MaterialAlertDialogBuilder(this@MainActivity)
 tvResult.text = result.toString()
 ```
 
-## Next TODO
-- support Dialog Fragments
+## Custom Dialogs (DialogFragment & BottomSheetDialogFragment)
+
+While above we read how to suspend calls to some dialogs, here we will discuss about suspend of calls to the DialogFragment and BottomSheetDialogFragment.
+
+### showAwait
+
+Show await suspends the call till the dialog is destroyed. Returns an Unit.
+
+```kotlin
+DemoDialogFragment().showAwait(
+	fragmentManager = supportFragmentManager,
+	tag = DemoDialogFragment::class.java.canonicalName
+)
+
+tvResult.text = "${DemoDialogFragment::class.java.canonicalName} finished"
+```
+
+### showAwaitResult
+
+Dialogs that must return results, an implementation of `SuspendDialogResult` interface is a must. `SuspendDialogResult` provides a member called `result` which one is returned
+from the dialog after destroy. Make sure to assign a value to `result` before calling dismiss.
+
+For more details, check the example app.
+
+```kotlin
+val result = DemoResultDialogFragment().showAwaitResult(
+	fragmentManager = supportFragmentManager,
+	tag = DemoResultDialogFragment::class.java.canonicalName
+)
+tvResult.text = result
+```
