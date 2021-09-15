@@ -1,8 +1,14 @@
 package com.xeinebiu.suspend.dialogs
 
+import android.app.Activity
+import android.view.Menu
+import android.widget.PopupMenu
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
-import kotlin.coroutines.resume
+import androidx.core.view.get
+import androidx.core.view.iterator
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 /**
  * Display different dialogs on screen by suspending the next call till the dialog is finished
@@ -70,6 +76,72 @@ object SuspendAlertDialog {
         continuation.invokeOnCancellation {
             dialog.dismiss()
         }
+    }
+
+    /**
+     * Set a list of items from given [menuRes] to be displayed in the dialog as the content.
+     *
+     * The list will have a check mark displayed to
+     * the right of the text for the checked item. Clicking on an item in the list will not
+     * dismiss the dialog. Clicking on a button will dismiss the dialog.
+     */
+    suspend inline fun setSingleChoiceItems(
+        activity: Activity,
+        positiveButtonText: CharSequence? = null,
+        negativeButtonText: CharSequence? = null,
+        neutralButtonText: CharSequence? = null,
+        @MenuRes menuRes: Int,
+        selectedIndex: Int = -1,
+        crossinline builder: () -> AlertDialog.Builder
+    ): SingleChoiceMenuResult {
+        val menu = PopupMenu(activity, null).menu
+        activity.menuInflater.inflate(menuRes, menu)
+
+        return setSingleChoiceItems(
+            positiveButtonText = positiveButtonText,
+            negativeButtonText = negativeButtonText,
+            neutralButtonText = neutralButtonText,
+            menu = menu,
+            selectedIndex = selectedIndex,
+            builder = builder
+        )
+    }
+
+    /**
+     * Set a list of items from given [Menu] to be displayed in the dialog as the content.
+     *
+     * The list will have a check mark displayed to
+     * the right of the text for the checked item. Clicking on an item in the list will not
+     * dismiss the dialog. Clicking on a button will dismiss the dialog.
+     */
+    suspend inline fun setSingleChoiceItems(
+        positiveButtonText: CharSequence? = null,
+        negativeButtonText: CharSequence? = null,
+        neutralButtonText: CharSequence? = null,
+        menu: Menu,
+        selectedIndex: Int = -1,
+        crossinline builder: () -> AlertDialog.Builder
+    ): SingleChoiceMenuResult {
+        val options = mutableListOf<String>()
+        val iterator = menu.iterator()
+        while (iterator.hasNext())
+            options.add(iterator.next().title.toString())
+
+        val result = setSingleChoiceItems(
+            positiveButtonText = positiveButtonText,
+            negativeButtonText = negativeButtonText,
+            neutralButtonText = neutralButtonText,
+            items = SingleChoiceItems(
+                items = options,
+                selectedIndex = selectedIndex
+            ),
+            builder = builder
+        )
+
+        return SingleChoiceMenuResult(
+            action = result.action,
+            itemId = menu[result.selectedIndex].itemId
+        )
     }
 
     /**
@@ -207,6 +279,24 @@ object SuspendAlertDialog {
          * Returns -1 in case [action] is [DialogAction.None]
          */
         val selectedIndex: Int
+    )
+
+    /**
+     * Represents the result for single choice dialog's from a [Menu]
+     */
+    data class SingleChoiceMenuResult(
+
+        /**
+         * Action which finished the dialog
+         */
+        val action: DialogAction,
+
+        /**
+         * Selected option index
+         *
+         * Returns -1 in case [action] is [DialogAction.None]
+         */
+        val itemId: Int
     )
 
     /**

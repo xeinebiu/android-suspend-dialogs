@@ -1,5 +1,8 @@
 package com.xeinebiu.suspend.dialogs
 
+import android.app.Activity
+import android.view.Menu
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 
 
@@ -30,6 +33,50 @@ suspend inline fun AlertDialog.Builder.confirm(
 ) {
     this
 }
+
+/**
+ * Set a list of items from given [menuRes] to be displayed in the dialog as the content.
+ *
+ * The list will have a check mark displayed to
+ * the right of the text for the checked item. Clicking on an item in the list will not
+ * dismiss the dialog. Clicking on a button will dismiss the dialog.
+ */
+suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
+    activity: Activity,
+    positiveButtonText: CharSequence? = null,
+    negativeButtonText: CharSequence? = null,
+    neutralButtonText: CharSequence? = null,
+    @MenuRes menuRes: Int,
+    selectedIndex: Int = -1
+): SuspendAlertDialog.SingleChoiceMenuResult = SuspendAlertDialog.setSingleChoiceItems(
+    activity = activity,
+    positiveButtonText = positiveButtonText,
+    negativeButtonText = negativeButtonText,
+    neutralButtonText = neutralButtonText,
+    menuRes = menuRes,
+    selectedIndex = selectedIndex
+) { this }
+
+/**
+ * Set a list of items from given [Menu] to be displayed in the dialog as the content.
+ *
+ * The list will have a check mark displayed to
+ * the right of the text for the checked item. Clicking on an item in the list will not
+ * dismiss the dialog. Clicking on a button will dismiss the dialog.
+ */
+suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
+    positiveButtonText: CharSequence? = null,
+    negativeButtonText: CharSequence? = null,
+    neutralButtonText: CharSequence? = null,
+    menu: Menu,
+    selectedIndex: Int = -1
+): SuspendAlertDialog.SingleChoiceMenuResult = SuspendAlertDialog.setSingleChoiceItems(
+    positiveButtonText = positiveButtonText,
+    negativeButtonText = negativeButtonText,
+    neutralButtonText = neutralButtonText,
+    menu = menu,
+    selectedIndex = selectedIndex
+) { this }
 
 /**
  * Set a list of items to be displayed in the dialog as the content.
