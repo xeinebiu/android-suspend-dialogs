@@ -14,7 +14,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.xeinebiu:android-suspend-dialogs:1.0.0'
+    implementation 'com.github.xeinebiu:android-suspend-dialogs:1.1.2'
 }
 ```
     
