@@ -260,7 +260,7 @@ object SuspendAlertDialog {
         /**
          * Default selected index
          */
-        val selectedIndex: Int
+        val selectedIndex: Int = -1
     )
 
     /**
