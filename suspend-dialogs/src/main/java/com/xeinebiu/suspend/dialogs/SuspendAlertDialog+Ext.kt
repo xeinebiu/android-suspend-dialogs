@@ -35,6 +35,17 @@ suspend inline fun AlertDialog.Builder.confirm(
 }
 
 /**
+ * Display an [AlertDialog] with [items] as CTA
+ *
+ * Dialog is dismiss when an item from [items] is clicked
+ *
+ * Return the selected index from [items]
+ */
+suspend fun AlertDialog.Builder.setItems(items: List<String>) = SuspendAlertDialog.setItems(
+    items
+) { this }
+
+/**
  * Set a list of items from given [menuRes] to be displayed in the dialog as the content.
  *
  * The list will have a check mark displayed to

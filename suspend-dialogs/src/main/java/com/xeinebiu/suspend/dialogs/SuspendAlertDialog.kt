@@ -1,6 +1,7 @@
 package com.xeinebiu.suspend.dialogs
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.view.Menu
 import android.widget.PopupMenu
 import androidx.annotation.MenuRes
@@ -72,6 +73,27 @@ object SuspendAlertDialog {
         }
 
         val dialog = dialogBuilder.show()
+
+        continuation.invokeOnCancellation {
+            dialog.dismiss()
+        }
+    }
+
+    /**
+     * Display an [AlertDialog] with [items] as CTA
+     *
+     * Dialog is dismiss when an item from [items] is clicked
+     *
+     * Return the selected index from [items]
+     */
+    suspend inline fun setItems(
+        items: List<String>,
+        crossinline builder: () -> AlertDialog.Builder
+    ) = suspendCancellableCoroutine<Int> { continuation ->
+
+        val dialog = builder().setItems(items.toTypedArray()) { _: DialogInterface?, which: Int ->
+            continuation.resume(which)
+        }.show()
 
         continuation.invokeOnCancellation {
             dialog.dismiss()

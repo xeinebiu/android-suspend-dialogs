@@ -17,4 +17,6 @@
     <string name="custom_dialog_fragment_with_result">Custom Dialog Fragment with Result</string>
     <string name="enter_text">Enter Text</string>
     <string name="save">Save</string>
+    <string name="set_items">Set Items</string>
+    <string name="set_items_ext">Set Items Ext</string>
 </resources>

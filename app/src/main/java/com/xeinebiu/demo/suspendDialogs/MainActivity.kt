@@ -1,7 +1,6 @@
 package com.xeinebiu.demo.suspendDialogs
 
 import android.os.Bundle
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -20,60 +19,89 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         with(binding) {
-            alertDialog()
-
             confirmDialog()
-
-            multiChoiceDialog()
-
-            singleChoiceDialog()
-
-            multiChoiceDialogExt()
-
-            singleChoiceDialogExt()
-
             confirmDialogExt()
 
-            alertdialogExt()
+            alertDialog()
+            alertDialogExt()
+
+            setItems()
+            setItemsExt()
+
+            multiChoiceDialog()
+            multiChoiceDialogExt()
+
+            singleChoiceDialog()
+            singleChoiceDialogExt()
 
             fragmentDialog()
-
             customDialogFragmentWithResult()
         }
     }
 
-    private fun ActivityMainBinding.customDialogFragmentWithResult() {
-        btnDialogFragmentResult.setOnClickListener {
+    private fun ActivityMainBinding.alertDialog() {
+        btnAlert.setOnClickListener {
             lifecycleScope.launch {
-                val result = DemoResultDialogFragment().showAwaitResult(
-                    fragmentManager = supportFragmentManager,
-                    tag = DemoResultDialogFragment::class.java.canonicalName
-                )
-                tvResult.text = result
+                SuspendAlertDialog.alert("Ok") {
+                    MaterialAlertDialogBuilder(this@MainActivity).setTitle("Hello")
+                }
+
+                tvResult.text = getString(R.string.alert_finished)
             }
         }
     }
 
-    private fun ActivityMainBinding.fragmentDialog() {
-        btnDialogFragment.setOnClickListener {
-            lifecycleScope.launch {
-                DemoDialogFragment().showAwait(
-                    fragmentManager = supportFragmentManager,
-                    tag = DemoDialogFragment::class.java.canonicalName
-                )
-                tvResult.text = "${DemoDialogFragment::class.java.canonicalName} finished"
-            }
-        }
-    }
-
-    private fun ActivityMainBinding.alertdialogExt() {
+    private fun ActivityMainBinding.alertDialogExt() {
         btnAlertExt.setOnClickListener {
             lifecycleScope.launch {
                 MaterialAlertDialogBuilder(this@MainActivity)
-                    .setTitle("Selected Option")
+                    .setTitle("Hello")
                     .alert("Ok")
 
                 tvResult.text = getString(R.string.alert_finished)
+            }
+        }
+    }
+
+    private fun ActivityMainBinding.setItems() {
+        btnSetItems.setOnClickListener {
+            lifecycleScope.launch {
+                val result = SuspendAlertDialog.setItems(
+                    listOf("Hello", "World")
+                ) {
+                    MaterialAlertDialogBuilder(this@MainActivity)
+                }
+
+                tvResult.text = result.toString()
+            }
+        }
+    }
+
+    private fun ActivityMainBinding.setItemsExt() {
+        btnSetItemsExt.setOnClickListener {
+            lifecycleScope.launch {
+                val result = MaterialAlertDialogBuilder(this@MainActivity)
+                    .setItems(listOf("Hello", "World"))
+
+                tvResult.text = result.toString()
+            }
+        }
+    }
+
+    private fun ActivityMainBinding.confirmDialog() {
+        btnConfirm.setOnClickListener {
+            lifecycleScope.launch {
+                val result = SuspendAlertDialog.confirm(
+                    positiveButtonText = "Positive",
+                    negativeButtonText = "Negative",
+                    neutralButtonText = "Neutral"
+                ) {
+                    MaterialAlertDialogBuilder(this@MainActivity)
+                        .setTitle("Title")
+                        .setMessage("Message")
+                }
+
+                tvResult.text = result.toString()
             }
         }
     }
@@ -95,22 +123,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun ActivityMainBinding.singleChoiceDialogExt() {
-        btnSingleChoiceExt.setOnClickListener {
+    private fun ActivityMainBinding.multiChoiceDialog() {
+        btnMultiChoice.setOnClickListener {
             lifecycleScope.launch {
-                val result = MaterialAlertDialogBuilder(this@MainActivity)
-                    .setTitle("Title")
-                    .setSingleChoiceItems(
-                        positiveButtonText = "Save",
-                        negativeButtonText = "Cancel",
-                        neutralButtonText = "Minimize",
-                        items = SuspendAlertDialog.SingleChoiceItems(
-                            items = listOf("Hello", "World", "Berlin", "Germany"),
-                            selectedIndex = 1
-                        )
+                val multiChoiceResult = SuspendAlertDialog.setMultiChoiceItems(
+                    positiveButtonText = "Save",
+                    negativeButtonText = "Cancel",
+                    neutralButtonText = "Minimize",
+                    items = SuspendAlertDialog.MultiChoiceItems(
+                        items = listOf("Hello", "World", "Berlin", "Germany"),
+                        checked = listOf(false, false, false, false)
                     )
+                ) {
+                    MaterialAlertDialogBuilder(this@MainActivity).setTitle("Title")
+                }
 
-                tvResult.text = result.toString()
+                tvResult.text = multiChoiceResult.toString()
             }
         }
     }
@@ -155,53 +183,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun ActivityMainBinding.multiChoiceDialog() {
-        btnMultiChoice.setOnClickListener {
+    private fun ActivityMainBinding.singleChoiceDialogExt() {
+        btnSingleChoiceExt.setOnClickListener {
             lifecycleScope.launch {
-                val multiChoiceResult = SuspendAlertDialog.setMultiChoiceItems(
-                    positiveButtonText = "Save",
-                    negativeButtonText = "Cancel",
-                    neutralButtonText = "Minimize",
-                    items = SuspendAlertDialog.MultiChoiceItems(
-                        items = listOf("Hello", "World", "Berlin", "Germany"),
-                        checked = listOf(false, false, false, false)
+                val result = MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle("Title")
+                    .setSingleChoiceItems(
+                        positiveButtonText = "Save",
+                        negativeButtonText = "Cancel",
+                        neutralButtonText = "Minimize",
+                        items = SuspendAlertDialog.SingleChoiceItems(
+                            items = listOf("Hello", "World", "Berlin", "Germany"),
+                            selectedIndex = 1
+                        )
                     )
-                ) {
-                    MaterialAlertDialogBuilder(this@MainActivity).setTitle("Title")
-                }
-
-                tvResult.text = multiChoiceResult.toString()
-            }
-        }
-    }
-
-    private fun ActivityMainBinding.confirmDialog() {
-
-        btnConfirm.setOnClickListener {
-            lifecycleScope.launch {
-                val result = SuspendAlertDialog.confirm(
-                    positiveButtonText = "Positive",
-                    negativeButtonText = "Negative",
-                    neutralButtonText = "Neutral"
-                ) {
-                    MaterialAlertDialogBuilder(this@MainActivity)
-                        .setTitle("Title")
-                        .setMessage("Message")
-                }
 
                 tvResult.text = result.toString()
             }
         }
     }
 
-    private fun ActivityMainBinding.alertDialog() {
-        btnAlert.setOnClickListener {
+    private fun ActivityMainBinding.fragmentDialog() {
+        btnDialogFragment.setOnClickListener {
             lifecycleScope.launch {
-                SuspendAlertDialog.alert("Ok") {
-                    MaterialAlertDialogBuilder(this@MainActivity).setTitle("Selected Option")
-                }
+                DemoDialogFragment().showAwait(
+                    fragmentManager = supportFragmentManager,
+                    tag = DemoDialogFragment::class.java.canonicalName
+                )
+                tvResult.text = "${DemoDialogFragment::class.java.canonicalName} finished"
+            }
+        }
+    }
 
-                tvResult.text = getString(R.string.alert_finished)
+    private fun ActivityMainBinding.customDialogFragmentWithResult() {
+        btnDialogFragmentResult.setOnClickListener {
+            lifecycleScope.launch {
+                val result = DemoResultDialogFragment().showAwaitResult(
+                    fragmentManager = supportFragmentManager,
+                    tag = DemoResultDialogFragment::class.java.canonicalName
+                )
+                tvResult.text = result
             }
         }
     }
