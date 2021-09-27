@@ -91,9 +91,15 @@ object SuspendAlertDialog {
         crossinline builder: () -> AlertDialog.Builder
     ) = suspendCancellableCoroutine<Int> { continuation ->
 
+        var selectedIndex = -1
+
         val dialog = builder().setItems(items.toTypedArray()) { _: DialogInterface?, which: Int ->
-            continuation.resume(which)
+            selectedIndex = which
         }.show()
+
+        dialog.setOnDismissListener {
+            continuation.resume(selectedIndex)
+        }
 
         continuation.invokeOnCancellation {
             dialog.dismiss()
