@@ -2,6 +2,7 @@ package com.xeinebiu.suspend.dialogs
 
 import android.app.Activity
 import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 
@@ -33,6 +34,32 @@ suspend inline fun AlertDialog.Builder.confirm(
 ) {
     this
 }
+
+/**
+ * Display an [AlertDialog] with [menuRes] as CTA
+ *
+ * Dialog is dismiss when an item from [menuRes] is clicked
+ *
+ * Return the selected [MenuItem]
+ */
+suspend inline fun AlertDialog.Builder.setItems(
+    activity: Activity,
+    @MenuRes menuRes: Int
+) = SuspendAlertDialog.setItems(
+    activity = activity,
+    menuRes = menuRes
+) { this }
+
+/**
+ * Display an [AlertDialog] with [menu] as CTA
+ *
+ * Dialog is dismiss when an item from [menu] is clicked
+ *
+ * Return the selected [MenuItem]
+ */
+suspend inline fun AlertDialog.Builder.setItems(
+    menu: Menu
+) = SuspendAlertDialog.setItems(menu) { this }
 
 /**
  * Display an [AlertDialog] with [items] as CTA

@@ -3,6 +3,7 @@ package com.xeinebiu.suspend.dialogs
 import android.app.Activity
 import android.content.DialogInterface
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.PopupMenu
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
@@ -80,6 +81,41 @@ object SuspendAlertDialog {
     }
 
     /**
+     * Display an [AlertDialog] with [menuRes] as CTA
+     *
+     * Dialog is dismiss when an item from [menuRes] is clicked
+     *
+     * Return the selected [MenuItem]
+     */
+    suspend inline fun setItems(
+        activity: Activity,
+        @MenuRes menuRes: Int,
+        crossinline builder: () -> AlertDialog.Builder
+    ): MenuItem? {
+        val menu = createMenu(activity, menuRes)
+
+        return setItems(menu, builder)
+    }
+
+    /**
+     * Display an [AlertDialog] with [menu] as CTA
+     *
+     * Dialog is dismiss when an item from [menu] is clicked
+     *
+     * Return the selected [MenuItem]
+     */
+    suspend inline fun setItems(
+        menu: Menu,
+        crossinline builder: () -> AlertDialog.Builder
+    ): MenuItem? {
+        val options = createOptionsFromMenu(menu)
+
+        val selectedIndex = setItems(options, builder)
+
+        return if (selectedIndex != -1) menu[selectedIndex] else null
+    }
+
+    /**
      * Display an [AlertDialog] with [items] as CTA
      *
      * Dialog is dismiss when an item from [items] is clicked
@@ -122,8 +158,7 @@ object SuspendAlertDialog {
         selectedIndex: Int = -1,
         crossinline builder: () -> AlertDialog.Builder
     ): SingleChoiceMenuResult {
-        val menu = PopupMenu(activity, null).menu
-        activity.menuInflater.inflate(menuRes, menu)
+        val menu = createMenu(activity, menuRes)
 
         return setSingleChoiceItems(
             positiveButtonText = positiveButtonText,
@@ -150,10 +185,7 @@ object SuspendAlertDialog {
         selectedIndex: Int = -1,
         crossinline builder: () -> AlertDialog.Builder
     ): SingleChoiceMenuResult {
-        val options = mutableListOf<String>()
-        val iterator = menu.iterator()
-        while (iterator.hasNext())
-            options.add(iterator.next().title.toString())
+        val options = createOptionsFromMenu(menu)
 
         val result = setSingleChoiceItems(
             positiveButtonText = positiveButtonText,
@@ -168,7 +200,7 @@ object SuspendAlertDialog {
 
         return SingleChoiceMenuResult(
             action = result.action,
-            itemId = menu[result.selectedIndex].itemId
+            menuItem = menu[result.selectedIndex]
         )
     }
 
@@ -276,6 +308,33 @@ object SuspendAlertDialog {
     }
 
     /**
+     * Create a [Menu] from [menuRes] using the [Activity.getMenuInflater]
+     */
+    fun createMenu(
+        activity: Activity,
+        menuRes: Int
+    ): Menu {
+        val menu = PopupMenu(activity, null).menu
+
+        activity.menuInflater.inflate(menuRes, menu)
+
+        return menu
+    }
+
+    /**
+     * Create a collection of options [String] from given [menu]
+     */
+    fun createOptionsFromMenu(menu: Menu): List<String> {
+        val options = mutableListOf<String>()
+
+        val iterator = menu.iterator()
+
+        while (iterator.hasNext()) options.add(iterator.next().title.toString())
+
+        return options
+    }
+
+    /**
      * Options to prompt on dialog
      */
     data class SingleChoiceItems(
@@ -322,9 +381,9 @@ object SuspendAlertDialog {
         /**
          * Selected option index
          *
-         * Returns -1 in case [action] is [DialogAction.None]
+         * Returns `null` in case [action] is [DialogAction.None]
          */
-        val itemId: Int
+        val menuItem: MenuItem?
     )
 
     /**
