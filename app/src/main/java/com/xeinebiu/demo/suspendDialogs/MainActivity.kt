@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity() {
         btnSetItems.setOnClickListener {
             lifecycleScope.launch {
                 val result = SuspendAlertDialog.setItems(
-                    listOf("Hello", "World")
+                    items = listOf("Hello", "World"),
+                    negativeButtonText = NEGATIVE,
+                    neutralButtonText = NEUTRAL,
                 ) {
                     MaterialAlertDialogBuilder(this@MainActivity)
                 }
@@ -81,7 +83,12 @@ class MainActivity : AppCompatActivity() {
         btnSetItemsExt.setOnClickListener {
             lifecycleScope.launch {
                 val result = MaterialAlertDialogBuilder(this@MainActivity)
-                    .setItems(listOf("Hello", "World"))
+                    .setItems(
+                        items = listOf("Hello", "World"),
+                        positiveButtonText = POSITIVE,
+                        negativeButtonText = NEGATIVE,
+                        neutralButtonText = NEUTRAL,
+                    )
 
                 tvResult.text = result.toString()
             }
@@ -92,9 +99,9 @@ class MainActivity : AppCompatActivity() {
         btnConfirm.setOnClickListener {
             lifecycleScope.launch {
                 val result = SuspendAlertDialog.confirm(
-                    positiveButtonText = "Positive",
-                    negativeButtonText = "Negative",
-                    neutralButtonText = "Neutral"
+                    positiveButtonText = POSITIVE,
+                    negativeButtonText = NEGATIVE,
+                    neutralButtonText = NEUTRAL,
                 ) {
                     MaterialAlertDialogBuilder(this@MainActivity)
                         .setTitle("Title")
@@ -113,9 +120,9 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Title")
                     .setMessage("Message")
                     .confirm(
-                        positiveButtonText = "Save",
-                        negativeButtonText = "Cancel",
-                        neutralButtonText = "Neutral",
+                        positiveButtonText = POSITIVE,
+                        negativeButtonText = NEGATIVE,
+                        neutralButtonText = NEUTRAL,
                     )
 
                 tvResult.text = result.toString()
@@ -127,9 +134,9 @@ class MainActivity : AppCompatActivity() {
         btnMultiChoice.setOnClickListener {
             lifecycleScope.launch {
                 val multiChoiceResult = SuspendAlertDialog.setMultiChoiceItems(
-                    positiveButtonText = "Save",
-                    negativeButtonText = "Cancel",
-                    neutralButtonText = "Minimize",
+                    positiveButtonText = POSITIVE,
+                    negativeButtonText = NEGATIVE,
+                    neutralButtonText = NEUTRAL,
                     items = SuspendAlertDialog.MultiChoiceItems(
                         items = listOf("Hello", "World", "Berlin", "Germany"),
                         checked = listOf(false, false, false, false)
@@ -149,9 +156,9 @@ class MainActivity : AppCompatActivity() {
                 val result = MaterialAlertDialogBuilder(this@MainActivity)
                     .setTitle("Title")
                     .setMultiChoiceItems(
-                        positiveButtonText = "Save",
-                        negativeButtonText = "Cancel",
-                        neutralButtonText = "Minimize",
+                        positiveButtonText = POSITIVE,
+                        negativeButtonText = NEGATIVE,
+                        neutralButtonText = NEUTRAL,
                         items = SuspendAlertDialog.MultiChoiceItems(
                             items = listOf("Hello", "World", "Berlin", "Germany"),
                             checked = listOf(false, false, false, false)
@@ -167,9 +174,9 @@ class MainActivity : AppCompatActivity() {
         btnSingleChoice.setOnClickListener {
             lifecycleScope.launch {
                 val singleChoiceResult = SuspendAlertDialog.setSingleChoiceItems(
-                    positiveButtonText = "Save",
-                    negativeButtonText = "Cancel",
-                    neutralButtonText = "Minimize",
+                    positiveButtonText = POSITIVE,
+                    negativeButtonText = NEGATIVE,
+                    neutralButtonText = NEUTRAL,
                     items = SuspendAlertDialog.SingleChoiceItems(
                         items = listOf("Hello", "World", "Berlin", "Germany"),
                         selectedIndex = 1
@@ -189,9 +196,9 @@ class MainActivity : AppCompatActivity() {
                 val result = MaterialAlertDialogBuilder(this@MainActivity)
                     .setTitle("Title")
                     .setSingleChoiceItems(
-                        positiveButtonText = "Save",
-                        negativeButtonText = "Cancel",
-                        neutralButtonText = "Minimize",
+                        positiveButtonText = POSITIVE,
+                        negativeButtonText = NEGATIVE,
+                        neutralButtonText = NEUTRAL,
                         items = SuspendAlertDialog.SingleChoiceItems(
                             items = listOf("Hello", "World", "Berlin", "Germany"),
                             selectedIndex = 1
@@ -225,5 +232,11 @@ class MainActivity : AppCompatActivity() {
                 tvResult.text = result
             }
         }
+    }
+
+    companion object {
+        private val POSITIVE = "Positive"
+        private val NEGATIVE = "Negative"
+        private val NEUTRAL = "Neutral"
     }
 }

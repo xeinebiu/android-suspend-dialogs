@@ -9,8 +9,8 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.get
 import androidx.core.view.iterator
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Display different dialogs on screen by suspending the next call till the dialog is finished
@@ -90,11 +90,20 @@ object SuspendAlertDialog {
     suspend inline fun setItems(
         activity: Activity,
         @MenuRes menuRes: Int,
+        positiveButtonText: CharSequence? = null,
+        negativeButtonText: CharSequence? = null,
+        neutralButtonText: CharSequence? = null,
         crossinline builder: () -> AlertDialog.Builder
-    ): MenuItem? {
+    ): ItemsMenuResult {
         val menu = createMenu(activity, menuRes)
 
-        return setItems(menu, builder)
+        return setItems(
+            menu = menu,
+            positiveButtonText = positiveButtonText,
+            negativeButtonText = negativeButtonText,
+            neutralButtonText = neutralButtonText,
+            builder = builder
+        )
     }
 
     /**
@@ -106,13 +115,25 @@ object SuspendAlertDialog {
      */
     suspend inline fun setItems(
         menu: Menu,
+        positiveButtonText: CharSequence? = null,
+        negativeButtonText: CharSequence? = null,
+        neutralButtonText: CharSequence? = null,
         crossinline builder: () -> AlertDialog.Builder
-    ): MenuItem? {
+    ): ItemsMenuResult {
         val options = createOptionsFromMenu(menu)
 
-        val selectedIndex = setItems(options, builder)
+        val result = setItems(
+            items = options,
+            positiveButtonText = positiveButtonText,
+            negativeButtonText = negativeButtonText,
+            neutralButtonText = neutralButtonText,
+            builder = builder
+        )
 
-        return if (selectedIndex != -1) menu[selectedIndex] else null
+        return ItemsMenuResult(
+            action = result.action,
+            menuItem = if (result.selectedIndex != -10) menu[result.selectedIndex] else null
+        )
     }
 
     /**
@@ -124,18 +145,42 @@ object SuspendAlertDialog {
      */
     suspend inline fun setItems(
         items: List<String>,
+        positiveButtonText: CharSequence? = null,
+        negativeButtonText: CharSequence? = null,
+        neutralButtonText: CharSequence? = null,
         crossinline builder: () -> AlertDialog.Builder
-    ) = suspendCancellableCoroutine<Int> { continuation ->
+    ) = suspendCancellableCoroutine<ItemsResult> { continuation ->
 
+        var action: DialogAction = DialogAction.None
         var selectedIndex = -1
 
-        val dialog = builder().setItems(items.toTypedArray()) { _: DialogInterface?, which: Int ->
-            selectedIndex = which
-        }.show()
+        val dialogBuilder =
+            builder().setItems(items.toTypedArray()) { _: DialogInterface?, which: Int ->
+                selectedIndex = which
+            }
 
-        dialog.setOnDismissListener {
-            continuation.resume(selectedIndex)
+        dialogBuilder.setPositiveButton(positiveButtonText) { _, _ ->
+            action = DialogAction.Positive
         }
+
+        dialogBuilder.setNegativeButton(negativeButtonText) { _, _ ->
+            action = DialogAction.Negative
+        }
+
+        dialogBuilder.setNeutralButton(neutralButtonText) { _, _ ->
+            action = DialogAction.Neutral
+        }
+
+        dialogBuilder.setOnDismissListener {
+            continuation.resume(
+                ItemsResult(
+                    action = action,
+                    selectedIndex = selectedIndex
+                )
+            )
+        }
+
+        val dialog = dialogBuilder.show()
 
         continuation.invokeOnCancellation {
             dialog.dismiss()
@@ -151,11 +196,11 @@ object SuspendAlertDialog {
      */
     suspend inline fun setSingleChoiceItems(
         activity: Activity,
+        @MenuRes menuRes: Int,
+        selectedIndex: Int = -1,
         positiveButtonText: CharSequence? = null,
         negativeButtonText: CharSequence? = null,
         neutralButtonText: CharSequence? = null,
-        @MenuRes menuRes: Int,
-        selectedIndex: Int = -1,
         crossinline builder: () -> AlertDialog.Builder
     ): SingleChoiceMenuResult {
         val menu = createMenu(activity, menuRes)
@@ -178,11 +223,11 @@ object SuspendAlertDialog {
      * dismiss the dialog. Clicking on a button will dismiss the dialog.
      */
     suspend inline fun setSingleChoiceItems(
+        menu: Menu,
+        selectedIndex: Int = -1,
         positiveButtonText: CharSequence? = null,
         negativeButtonText: CharSequence? = null,
         neutralButtonText: CharSequence? = null,
-        menu: Menu,
-        selectedIndex: Int = -1,
         crossinline builder: () -> AlertDialog.Builder
     ): SingleChoiceMenuResult {
         val options = createOptionsFromMenu(menu)
@@ -212,10 +257,10 @@ object SuspendAlertDialog {
      * dismiss the dialog. Clicking on a button will dismiss the dialog.
      */
     suspend inline fun setSingleChoiceItems(
+        items: SingleChoiceItems,
         positiveButtonText: CharSequence? = null,
         negativeButtonText: CharSequence? = null,
         neutralButtonText: CharSequence? = null,
-        items: SingleChoiceItems,
         crossinline builder: () -> AlertDialog.Builder
     ) = suspendCancellableCoroutine<SingleChoiceResult> { continuation ->
         val dialogBuilder = builder()
@@ -245,7 +290,10 @@ object SuspendAlertDialog {
 
         dialogBuilder.setOnDismissListener {
             continuation.resume(
-                SingleChoiceResult(action = action, selectedIndex = selectedIndex)
+                SingleChoiceResult(
+                    action = action,
+                    selectedIndex = selectedIndex
+                )
             )
         }
 
@@ -263,10 +311,10 @@ object SuspendAlertDialog {
      * dismiss the dialog. Clicking on a button will dismiss the dialog.
      */
     suspend inline fun setMultiChoiceItems(
+        items: MultiChoiceItems,
         positiveButtonText: CharSequence? = null,
         negativeButtonText: CharSequence? = null,
         neutralButtonText: CharSequence? = null,
-        items: MultiChoiceItems,
         crossinline builder: () -> AlertDialog.Builder
     ) = suspendCancellableCoroutine<MultiChoiceResult> { continuation ->
         val dialogBuilder = builder()
@@ -296,7 +344,10 @@ object SuspendAlertDialog {
 
         dialogBuilder.setOnDismissListener {
             continuation.resume(
-                MultiChoiceResult(action = action, checked = checkedResult)
+                MultiChoiceResult(
+                    action = action,
+                    checked = checkedResult
+                )
             )
         }
 
@@ -333,6 +384,16 @@ object SuspendAlertDialog {
 
         return options
     }
+
+    data class ItemsMenuResult(
+        val menuItem: MenuItem?,
+        val action: DialogAction
+    )
+
+    data class ItemsResult(
+        val selectedIndex: Int,
+        val action: DialogAction
+    )
 
     /**
      * Options to prompt on dialog

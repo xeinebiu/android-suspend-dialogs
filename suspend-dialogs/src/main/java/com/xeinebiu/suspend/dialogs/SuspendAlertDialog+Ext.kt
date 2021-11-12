@@ -44,10 +44,16 @@ suspend inline fun AlertDialog.Builder.confirm(
  */
 suspend inline fun AlertDialog.Builder.setItems(
     activity: Activity,
-    @MenuRes menuRes: Int
+    @MenuRes menuRes: Int,
+    positiveButtonText: CharSequence? = null,
+    negativeButtonText: CharSequence? = null,
+    neutralButtonText: CharSequence? = null,
 ) = SuspendAlertDialog.setItems(
     activity = activity,
-    menuRes = menuRes
+    menuRes = menuRes,
+    positiveButtonText = positiveButtonText,
+    negativeButtonText = negativeButtonText,
+    neutralButtonText = neutralButtonText
 ) { this }
 
 /**
@@ -58,8 +64,16 @@ suspend inline fun AlertDialog.Builder.setItems(
  * Return the selected [MenuItem]
  */
 suspend inline fun AlertDialog.Builder.setItems(
-    menu: Menu
-) = SuspendAlertDialog.setItems(menu) { this }
+    menu: Menu,
+    positiveButtonText: CharSequence? = null,
+    negativeButtonText: CharSequence? = null,
+    neutralButtonText: CharSequence? = null,
+) = SuspendAlertDialog.setItems(
+    menu = menu,
+    positiveButtonText = positiveButtonText,
+    negativeButtonText = negativeButtonText,
+    neutralButtonText = neutralButtonText
+) { this }
 
 /**
  * Display an [AlertDialog] with [items] as CTA
@@ -68,8 +82,16 @@ suspend inline fun AlertDialog.Builder.setItems(
  *
  * Return the selected index from [items]
  */
-suspend fun AlertDialog.Builder.setItems(items: List<String>) = SuspendAlertDialog.setItems(
-    items
+suspend fun AlertDialog.Builder.setItems(
+    items: List<String>,
+    positiveButtonText: CharSequence? = null,
+    negativeButtonText: CharSequence? = null,
+    neutralButtonText: CharSequence? = null,
+) = SuspendAlertDialog.setItems(
+    items = items,
+    positiveButtonText = positiveButtonText,
+    negativeButtonText = negativeButtonText,
+    neutralButtonText = neutralButtonText
 ) { this }
 
 /**
@@ -81,11 +103,11 @@ suspend fun AlertDialog.Builder.setItems(items: List<String>) = SuspendAlertDial
  */
 suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
     activity: Activity,
+    @MenuRes menuRes: Int,
+    selectedIndex: Int = -1,
     positiveButtonText: CharSequence? = null,
     negativeButtonText: CharSequence? = null,
     neutralButtonText: CharSequence? = null,
-    @MenuRes menuRes: Int,
-    selectedIndex: Int = -1
 ): SuspendAlertDialog.SingleChoiceMenuResult = SuspendAlertDialog.setSingleChoiceItems(
     activity = activity,
     positiveButtonText = positiveButtonText,
@@ -103,11 +125,11 @@ suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
  * dismiss the dialog. Clicking on a button will dismiss the dialog.
  */
 suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
+    menu: Menu,
+    selectedIndex: Int = -1,
     positiveButtonText: CharSequence? = null,
     negativeButtonText: CharSequence? = null,
     neutralButtonText: CharSequence? = null,
-    menu: Menu,
-    selectedIndex: Int = -1
 ): SuspendAlertDialog.SingleChoiceMenuResult = SuspendAlertDialog.setSingleChoiceItems(
     positiveButtonText = positiveButtonText,
     negativeButtonText = negativeButtonText,
@@ -124,10 +146,10 @@ suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
  * dismiss the dialog. Clicking on a button will dismiss the dialog.
  */
 suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
+    items: SuspendAlertDialog.SingleChoiceItems,
     positiveButtonText: CharSequence? = null,
     negativeButtonText: CharSequence? = null,
     neutralButtonText: CharSequence? = null,
-    items: SuspendAlertDialog.SingleChoiceItems
 ) = SuspendAlertDialog.setSingleChoiceItems(
     positiveButtonText = positiveButtonText,
     negativeButtonText = negativeButtonText,
@@ -142,10 +164,10 @@ suspend inline fun AlertDialog.Builder.setSingleChoiceItems(
  * dismiss the dialog. Clicking on a button will dismiss the dialog.
  */
 suspend inline fun AlertDialog.Builder.setMultiChoiceItems(
+    items: SuspendAlertDialog.MultiChoiceItems,
     positiveButtonText: CharSequence? = null,
     negativeButtonText: CharSequence? = null,
     neutralButtonText: CharSequence? = null,
-    items: SuspendAlertDialog.MultiChoiceItems
 ) = SuspendAlertDialog.setMultiChoiceItems(
     positiveButtonText = positiveButtonText,
     negativeButtonText = negativeButtonText,
