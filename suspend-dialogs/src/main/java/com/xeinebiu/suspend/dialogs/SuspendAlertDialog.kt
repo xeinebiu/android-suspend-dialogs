@@ -132,7 +132,7 @@ object SuspendAlertDialog {
 
         return ItemsMenuResult(
             action = result.action,
-            menuItem = if (result.selectedIndex != -10) menu[result.selectedIndex] else null
+            menuItem = if (result.selectedIndex != -1) menu[result.selectedIndex] else null
         )
     }
 

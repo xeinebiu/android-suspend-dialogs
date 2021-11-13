@@ -6,6 +6,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.xeinebiu.demo.suspendDialogs.databinding.ActivityMainBinding
 import com.xeinebiu.suspend.dialogs.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
