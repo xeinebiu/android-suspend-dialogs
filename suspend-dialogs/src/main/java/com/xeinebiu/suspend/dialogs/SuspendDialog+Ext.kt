@@ -2,9 +2,9 @@ package com.xeinebiu.suspend.dialogs
 
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -56,10 +56,10 @@ suspend fun <T> SuspendDialogResult<T>.showAwaitResult(
 
 private class DialogLifeCycleObserver(
     private val onDestroy: LifecycleObserver.() -> Unit
-) : LifecycleObserver {
+) : DefaultLifecycleObserver {
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun destroy() {
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
         onDestroy()
     }
 }
